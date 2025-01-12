@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { CartItem, Product, AuthState, WishlistItem, Order, CompareProduct, Review } from '../types';
 import { products as initialProducts } from '../data/products';
-import { UserDB, OrderDB, ReviewDB } from '../database/db';
-
+import {  OrderDB, ReviewDB } from '../database/db';
+import {SERVER_IP} from '../env'
 interface Currency {
     code: string;
     symbol: string;
@@ -267,7 +267,7 @@ export const useStore = create<Store>((set, get) => ({
     login: async (email, password) => {
 	set({ auth: { ...get().auth, isLoading: true, error: null } });
 	try {
-	    const response = await fetch(`http://localhost:8080/users/search/findOneByEmail?email=${email}`);
+	    const response = await fetch(`${SERVER_IP}/users/search/findOneByEmail?email=${email}`);
 	    if(!response.ok) {
 		throw new Error(`Error! ${response.status}, user not found`);
 	    }
@@ -295,13 +295,13 @@ export const useStore = create<Store>((set, get) => ({
     signup: async (email, password, name) => {
 	
 	set({ auth: { ...get().auth, isLoading: true, error: null } });
-	const checkIfUserExists = await fetch(`http://localhost:8080/users/search/findOneByEmail?email=${email}`);
+	const checkIfUserExists = await fetch(`${SERVER_IP}/users/search/findOneByEmail?email=${email}`);
 	if(checkIfUserExists.status != 404) {
 	    throw new Error("failed");
 	}
 
 	try {
-	    const response = await fetch('http://localhost:8080/users', {
+	    const response = await fetch(`${SERVER_IP}/users`, {
 		method: 'POST',
 		headers: {
                     'Content-Type': 'application/json',
